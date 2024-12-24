@@ -1,0 +1,106 @@
+{
+    "players":[
+        {
+            "id": 0,
+            "name": "AAAA",
+            "role": "keeper",
+            "img": "PlayersAvatar/img_1.png"
+        },
+        {
+            "id": 1,
+            "name": "BBBB",
+            "role": "keeper",
+            "img": "PlayersAvatar/img_2.png"
+        },
+        {
+            "id": 2,
+            "name": "CCCC",
+            "role": "defender",
+            "img": "PlayersAvatar/img_3.png"
+        },
+        {
+            "id": 3,
+            "name": "DDDD",
+            "role": "defender",
+            "img": "PlayersAvatar/img_4.png"
+        },
+        {
+            "id": 4,
+            "name": "EEEE",
+            "role": "defender",
+            "img": "PlayersAvatar/img_5.png"
+        },
+        {
+            "id": 5,
+            "name": "FFFF",
+            "role": "defender",
+            "img": "PlayersAvatar/img_6.png"
+        },
+        {
+            "id": 6,
+            "name": "GGGG",
+            "role": "defender",
+            "img": "PlayersAvatar/img_7.png"
+        },
+        {
+            "id": 7,
+            "name": "HHHH",
+            "role": "mid",
+            "img": "PlayersAvatar/img_8.png"
+        },
+        {
+            "id": 8,
+            "name": "IIII",
+            "role": "mid",
+            "img": "PlayersAvatar/img_9.png"
+        },
+        {
+            "id": 9,
+            "name": "LLLL",
+            "role": "mid",
+            "img": "PlayersAvatar/img_10.png"
+        },
+        {
+            "id": 10,
+            "name": "MMMM",
+            "role": "mid",
+            "img": "PlayersAvatar/img_11.png"
+        },
+        {
+            "id": 11,
+            "name": "NNNN",
+            "role": "mid",
+            "img": "PlayersAvatar/img_8.png"
+        },
+        {
+            "id": 12,
+            "name": "OOOO",
+            "role": "striker",
+            "img": "PlayersAvatar/img_12.png"
+        },
+        {
+            "id": 13,
+            "name": "PPPP",
+            "role": "striker",
+            "img": "PlayersAvatar/img_5.png"
+        },
+        {
+            "id": 14,
+            "name": "QQQQ",
+            "role": "striker",
+            "img": "PlayersAvatar/img_3.png"
+        },
+        {
+            "id": 15,
+            "name": "RRRR",
+            "role": "striker",
+            "img": "PlayersAvatar/img_1.png"
+        },
+        {
+            "id": 16,
+            "name": "SSSS",
+            "role": "striker",
+            "img": "PlayersAvatar/img_10.png"
+        }
+    ]
+}
