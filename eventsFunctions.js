@@ -1,7 +1,23 @@
 import { dragOverHandler, dragLeaveHandler, dropHandler, buttonDeleteHandler} from "./eventsHandler.js";
-import { carouselPlayersElement } from "./main.js";
+import { carouselPlayersContainerElement, carouselPlayersElement, teamSelected } from "./main.js";
 
-export const deleteSelection = (playerSelected) => {
+export const deleteSelection = (playerSelected, savePlayer) => {
+
+    if(!savePlayer) {
+        switch(teamSelected) {
+            case 'A':
+                teamAPlayers = teamAPlayers.filter(
+                    player => !(player[0] === playerSelected.dataset.indexPlayer && player[1] === playerSelected.dataset.indexPosition)
+                );
+                break;
+            case 'B':
+                teamBPlayers.filter(
+                    player => !(player[0] === playerSelected.dataset.indexPlayer && player[1] === playerSelected.dataset.indexPosition)
+                );
+                break;
+        }
+    }
+    
     playerSelected.querySelector('.lineup-player-avatar').querySelector('.avatar-img').remove();
     playerSelected.querySelector('.lineup-player-avatar').classList.remove('lineup-player-avatar-w-description');
     playerSelected.querySelector('.lineup-player-description-container').querySelector('.lineup-player-description').remove();
@@ -64,7 +80,10 @@ export const checkValidPlayerPosition = (dropPosition, playerDragged) => {
     }
 }
 
-export const dropPlayer = (dropPosition, playerDragged) => {
+export let teamAPlayers = [];
+export let teamBPlayers = [];
+
+export const dropPlayer = (dropPosition, playerDragged, insertFromDrag) => {
     if (dropPosition.classList.contains('drop-valid')) {
         dropPosition.classList.remove('drop-valid');
         dropPosition.dataset.indexPlayer = playerDragged.dataset.indexPlayer;
@@ -109,6 +128,14 @@ export const dropPlayer = (dropPosition, playerDragged) => {
         dropPosition.removeEventListener('drop', dropHandler);
         dropPosition.querySelector('.lineup-player-description-container').classList.add('lineup-player-description-container-show');
 
+        if(insertFromDrag) {
+            if(teamSelected == 'A'){
+                teamAPlayers.push([playerDragged.dataset.indexPlayer, dropPosition.dataset.indexPosition]);
+            }else{
+                teamBPlayers.push([playerDragged.dataset.indexPlayer, dropPosition.dataset.indexPosition]);
+            }
+        }
+        
     } else {
         playerDragged.style.opacity = 1;
         playerDragged.draggable = true;
@@ -118,14 +145,161 @@ export const dropPlayer = (dropPosition, playerDragged) => {
     playerDragged = null;
 }
 
-export const hidePlayers = (role) => {
-    [...carouselPlayersElement.children]
-    .filter(
-        player => player.dataset.rolePlayer === role
-    )
-    .map(
-        player => player.classList.add('selectable-player-hidden')
-    );
+let carouselFirstPlayerIndex;
+let carouselLastPlayerIndex;
+let carouselPlayerIndex = 0;
+
+export const setCarouselExtremaIndices = (carouselLength) => {
+    carouselFirstPlayerIndex = 0;
+    carouselLastPlayerIndex = carouselLength;
 }
 
-//renderElements(toRender, document.body)
+export const moveCarousel = (direction) => {
+    
+    if(carouselPlayerIndex < carouselFirstPlayerIndex) 
+        carouselPlayerIndex = carouselFirstPlayerIndex;
+    else if(carouselPlayerIndex > carouselLastPlayerIndex)
+        carouselPlayerIndex = carouselLastPlayerIndex;
+
+    carouselPlayerIndex += direction;
+
+    if (carouselPlayersElement.children[carouselPlayerIndex].classList.contains('selectable-player-hidden')){
+        moveCarousel(direction);
+    } else {
+        carouselPlayersElement.children[carouselPlayerIndex].scrollIntoView({
+            behavior: "smooth"
+        });
+    }
+    modifyCarouselArrows();
+}
+
+export const modifyCarouselArrows = (carouselEmpty) => {
+    if (carouselEmpty) {
+        carouselPlayersContainerElement.querySelector('.button-carousel-right').classList.add('hidden');
+        carouselPlayersContainerElement.querySelector('.button-carousel-left').classList.add('hidden');
+    } else {
+        if (carouselPlayerIndex == carouselLastPlayerIndex) {
+            carouselPlayersContainerElement.querySelector('.button-carousel-right').classList.add('hidden');
+        } else if (carouselPlayerIndex == carouselFirstPlayerIndex) {
+            carouselPlayersContainerElement.querySelector('.button-carousel-left').classList.add('hidden');
+        } else {
+            carouselPlayersContainerElement.querySelector('.button-carousel-right').classList.remove('hidden');
+            carouselPlayersContainerElement.querySelector('.button-carousel-left').classList.remove('hidden');
+        }
+    }
+    
+}
+
+export const resetIndexPlayer = () => {
+
+    for (let i = carouselPlayersElement.children.length - 1; i >= 0; i--) {
+        if (!carouselPlayersElement.children[i].classList.contains('selectable-player-hidden')) {
+            carouselLastPlayerIndex = parseInt(carouselPlayersElement.children[i].dataset.indexPlayer);
+            break;
+        }
+    }
+
+    for (let i = 0; i < carouselPlayersElement.children.length; i++) {
+        if (!carouselPlayersElement.children[i].classList.contains('selectable-player-hidden')) {
+            carouselFirstPlayerIndex = parseInt(carouselPlayersElement.children[i].dataset.indexPlayer);
+            break;
+        }
+    }
+
+    if (carouselPlayersElement.children[carouselPlayerIndex].classList.contains('selectable-player-hidden')) {
+        if (carouselPlayerIndex > carouselLastPlayerIndex) {
+            carouselPlayerIndex = carouselLastPlayerIndex;
+        } else {
+            for (let i = carouselPlayerIndex + 1; i <= carouselLastPlayerIndex; i++) {
+                if (!carouselPlayersElement.children[i].classList.contains('selectable-player-hidden')) {
+                    carouselPlayerIndex = i;
+                    break;
+                }
+            }
+        }
+        carouselPlayersElement.children[carouselPlayerIndex].scrollIntoView({
+            behavior: "smooth"
+        });
+    }
+    modifyCarouselArrows(false);
+}
+
+let counterSelectablePlayers;
+let counterFilteredPlayers = 0;
+
+export const hidePlayers = (role, filterType) => {
+    switch(filterType) {
+        case 'role':
+            [...carouselPlayersElement.children]
+            .filter(
+                player => player.dataset.rolePlayer === role
+            )
+            .map(
+                player => {
+                    player.dataset.filterCounter++;
+                    player.classList.add('selectable-player-hidden');
+                    counterFilteredPlayers++;
+                }
+            );
+            break;
+        case 'gender':
+            [...carouselPlayersElement.children]
+            .filter(
+                player => player.dataset.genderPlayer === role
+            )
+            .map(
+                player => {
+                    player.dataset.filterCounter++;
+                    player.classList.add('selectable-player-hidden');
+                    counterFilteredPlayers++;
+                }
+            );
+            break;
+    }
+    counterSelectablePlayers = carouselPlayersElement.children.length - counterFilteredPlayers;
+    resetIndexPlayer();
+    if (counterSelectablePlayers == 0) {
+        modifyCarouselArrows(true);
+    }
+}
+
+export const showPlayers = (role, filterType) => {
+    switch(filterType) {
+        case 'role':
+            [...carouselPlayersElement.children]
+            .filter(
+                player => player.dataset.rolePlayer === role
+            )
+            .map(
+                player => {
+                    player.dataset.filterCounter--;
+                    if(player.dataset.filterCounter == 0){
+                        player.classList.remove('selectable-player-hidden')
+                        counterFilteredPlayers--;
+                    }
+                }
+            );
+            break;
+        case 'gender':
+            [...carouselPlayersElement.children]
+            .filter(
+                player => player.dataset.genderPlayer === role
+            )
+            .map(
+                player => {
+                    player.dataset.filterCounter--;
+                    if(player.dataset.filterCounter == 0){
+                        player.classList.remove('selectable-player-hidden')
+                        counterFilteredPlayers--;
+                    }
+                }
+            );
+            break;
+    }
+    counterSelectablePlayers = carouselPlayersElement.children.length - counterFilteredPlayers;
+    resetIndexPlayer();
+
+    modifyCarouselArrows(false);
+}
+
+

@@ -1,5 +1,5 @@
 import { deleteSelection } from "./eventsFunctions.js";
-import { checkValidPlayerPosition, dropPlayer, hidePlayers } from "./eventsFunctions.js";
+import { checkValidPlayerPosition, dropPlayer, showPlayers, hidePlayers } from "./eventsFunctions.js";
 
 // drag'n drop events
 
@@ -14,7 +14,6 @@ export const dragStartHandler = (e, className) => {
         playerDragged.draggable = false;
         playerDragged.dataset.selectable = false;
         }, 0);
-        
 };
 
 export const dragEndHandler = (className) => {
@@ -40,21 +39,19 @@ export const dragLeaveHandler = (e) => {
 
 export const dropHandler = (e) => {
     playerDropped = true;
-    dropPlayer(e.target, playerDragged);
+    dropPlayer(e.target, playerDragged, true);
     playerDragged = null;
 };
 
-// delete events
 export const buttonDeleteHandler = (e) => {
     e.stopPropagation();
-    deleteSelection(e.target.parentElement.parentElement);
+    deleteSelection(e.target.parentElement.parentElement, false);
 }
 
-
-export const filterCheckboxHandler = (e) => {
+export const filterCheckboxHandler = (e, filterType) => {
     if (e.target.checked) {
-        showPlayers(e.target.value);
+        showPlayers(e.target.value, filterType);
     } else {
-        hidePlayers(e.target.value);
+        hidePlayers(e.target.value, filterType);
     }
 }

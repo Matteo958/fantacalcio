@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="style.css"></link>
+</head>
+<body>
+
+    <form>
+        <select id="formazioni" onchange="instantiatePlayers()">
+            <option value="3-5-2" >3-5-2</option>
+            <option value="4-4-2" >4-4-2</option>
+            <option value="4-5-1" selected>4-5-1</option>
+            <option value="3-4-3" >3-4-3</option>
+            <option value="1-8-1" >1-8-1</option>
+        </select>
+    </form><br>
+    <div id="filter-container">
+
+    </div>
+    <div id="container">
+        <div id="players-container"></div>
+        <div id="player-selection-carousel-container">
+            <div id="player-selection-carousel">
+
+                <div class="carousel-button button-right">
+                    <img class="carousel-button-image" src="PlayersAvatar/arrow_icon_right.png" alt="">
+                </div>
+                <div class="carousel-button button-left">
+                    <img class="carousel-button-image" src="PlayersAvatar/arrow_icon_left.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+ 
+    <script src="script.js" type="module"></script>
+</body>
+</html>

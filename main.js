@@ -1,6 +1,7 @@
-import { renderElements} from "./eventsFunctions.js";
+import { dropPlayer, renderElements} from "./eventsFunctions.js";
 import { dragStartHandler, dragEndHandler, dragOverHandler, dragLeaveHandler, dropHandler, filterCheckboxHandler } from "./eventsHandler.js";
-import { deleteSelection } from "./eventsFunctions.js";
+import { deleteSelection, teamAPlayers, teamBPlayers, setCarouselExtremaIndices, moveCarousel} from "./eventsFunctions.js";
+
 
 const mainContainer = document.getElementById('main-container');
 const maxPlayersInRow = 8;
@@ -8,23 +9,27 @@ const maxPlayersInRow = 8;
 let teamSelectElement = null;
 let lineupSelectElement = null;
 let lineupContainerElement = null;
-let carouselPlayersContainerElement = null;
+export let carouselPlayersContainerElement = null;
 export let carouselPlayersElement = null;
-let carouselPlayerIndex = 0;
-let firstAccess;
+
+export let teamSelected;
+let lineupTeamA;
+let lineupTeamB;
+
+// const reloadPage = (e) => {
+//     e.preventDefault();
+// }
 
 const initialize = () => {
-    firstAccess = true;
     try {
         if (!mainContainer) {
             throw new Error();
         }
-        teamSelectElement = mainContainer.querySelector('#select-team-container').querySelector('.select'); 
+        teamSelectElement = mainContainer.querySelector('#select-team'); 
         if (!teamSelectElement) {
             throw new Error();
         }
         checkTeamSelected();
-
     } catch (error) {
         console.log(`%c${error.toString()}`, "color: white; font-size: 20px");
         return;
@@ -33,15 +38,13 @@ const initialize = () => {
 
 const checkTeamSelected = () => {
     try {
-        lineupSelectElement = mainContainer.querySelector('#select-lineup-container').querySelector('.select');
+        lineupSelectElement = mainContainer.querySelector('#select-lineup');
         if (!lineupSelectElement) {
             throw new Error();
         }
         if (teamSelectElement.value == 'not-selected') {
             lineupSelectElement.setAttribute('disabled', true);
-        } else {
-            lineupSelectElement.removeAttribute('disabled');
-        }
+        } 
         teamSelectElement.addEventListener('change', teamSelectionHandler);
     } catch (error) {
         console.log(`%c${error.toString()}`, "color: white; font-size: 20px");
@@ -50,17 +53,71 @@ const checkTeamSelected = () => {
 }
 
 const teamSelectionHandler = (e) => {
-    if (firstAccess) {
-        e.target.children[0].remove();
-        firstAccess = false;
+    if (!teamSelected) {
+        e.target.children[0].remove(); //Remove the '---' option from team selection
         lineupSelectElement.removeAttribute('disabled');
         lineupSelectElement.addEventListener('change', instantiateEmptyLineup);
         instantiateLineupContainer();
         instantiateFilterContainer();
         instantiateCarouselPlayersContainer();
-        fetchSelectablePlayers();
+        fetchSelectablePlayers(e.target.value);
     }
+    console.log(teamSelected);
+    if (teamSelected === 'A') {
+        lineupTeamA = lineupSelectElement.value;
+    } else {
+        lineupTeamB = lineupSelectElement.value;
+    }
+    console.log(lineupTeamA);
+    console.log(lineupTeamB);
+    clearCurrentLineup();
+    teamSelected = e.target.value;
+    retrievePlayers();
 } 
+
+const retrievePlayers = () => {
+
+    switch(teamSelected) {
+        case 'A':
+            if (!lineupTeamA) {
+                lineupSelectElement.value = lineupSelectElement.children[0].value;
+            } else {
+                lineupSelectElement.value = lineupTeamA;
+            }
+            instantiateEmptyLineup();
+            teamAPlayers.forEach(
+                el => {
+                    lineupContainerElement.children[el[1]].classList.add('drop-valid');
+                    dropPlayer(lineupContainerElement.children[el[1]], carouselPlayersElement.children[el[0]], false);
+                }
+            )
+            break;
+        case 'B':
+            if (!lineupTeamB) {
+                lineupSelectElement.value = lineupSelectElement.children[0].value;
+            } else {
+                lineupSelectElement.value = lineupTeamB;
+            }
+            instantiateEmptyLineup();
+            teamBPlayers.forEach(
+                el => {
+                    lineupContainerElement.children[el[1]].classList.add('drop-valid');
+                    dropPlayer(lineupContainerElement.children[el[1]], carouselPlayersElement.children[el[0]], false);
+                }
+            )
+            break;
+    }
+}
+
+const clearCurrentLineup = () => {
+    [...lineupContainerElement.children].forEach(
+        el => {
+            if(el.dataset.indexPlayer)
+                deleteSelection(el)
+        }
+    );
+    
+}
 
 const instantiateLineupContainer = () => {
     const lineupContainer = [
@@ -90,7 +147,7 @@ const instantiateFilterContainer  = () => {
                     attributes: {
                         id: 'filters-role-container',
                     },
-                    content: 'FILTRA PER RUOLO',
+                    content: 'Filtra per ruolo',
                     children: [
                         {
                             tagName: 'div',
@@ -109,7 +166,7 @@ const instantiateFilterContainer  = () => {
                                     listeners: [
                                         {
                                             event: 'change',
-                                            name: filterCheckboxHandler,
+                                            name: function(e) {filterCheckboxHandler(e, 'role')},
                                         }
                                     ]
                                 },
@@ -136,6 +193,12 @@ const instantiateFilterContainer  = () => {
                                         value: 'defender',
                                         checked: true,
                                     },
+                                    listeners: [
+                                        {
+                                            event: 'change',
+                                            name: function(e) {filterCheckboxHandler(e, 'role')},
+                                        }
+                                    ]
                                 },
                                 {
                                     tagName: 'label',
@@ -160,6 +223,12 @@ const instantiateFilterContainer  = () => {
                                         value: 'mid',
                                         checked: true,
                                     },
+                                    listeners: [
+                                        {
+                                            event: 'change',
+                                            name: function(e) {filterCheckboxHandler(e, 'role')},
+                                        }
+                                    ]
                                 },
                                 {
                                     tagName: 'label',
@@ -184,6 +253,12 @@ const instantiateFilterContainer  = () => {
                                         value: 'striker',
                                         checked: true,
                                     },
+                                    listeners: [
+                                        {
+                                            event: 'change',
+                                            name: function(e) {filterCheckboxHandler(e, 'role')},
+                                        }
+                                    ]
                                 },
                                 {
                                     tagName: 'label',
@@ -204,7 +279,7 @@ const instantiateFilterContainer  = () => {
                     attributes: {
                         id: 'filters-gender-container',
                     },
-                    content: 'FILTRA PER GENERE',
+                    content: 'Filtra per genere',
                     children: [
                         {
                             tagName: 'div',
@@ -217,9 +292,15 @@ const instantiateFilterContainer  = () => {
                                     attributes: {
                                         type: 'checkbox',
                                         name: 'gender1',
-                                        value: 'male',
+                                        value: 'M',
                                         checked: true,
                                     },
+                                    listeners: [
+                                        {
+                                            event: 'change',
+                                            name: function(e) {filterCheckboxHandler(e, 'gender')},
+                                        }
+                                    ]
                                 },
                                 {
                                     tagName: 'label',
@@ -241,9 +322,15 @@ const instantiateFilterContainer  = () => {
                                     attributes: {
                                         type: 'checkbox',
                                         name: 'gender2',
-                                        value: 'female',
+                                        value: 'F',
                                         checked: true,
                                     },
+                                    listeners: [
+                                        {
+                                            event: 'change',
+                                            name: function(e) {filterCheckboxHandler(e, 'gender')},
+                                        }
+                                    ]
                                 },
                                 {
                                     tagName: 'label',
@@ -296,6 +383,7 @@ const instantiateEmptyLineup = () => {
                             style: `grid-area: area-${index}-${i}`,
                             'data-role-player': newPlayerRole(),
                             'data-index-player': '',
+                            'data-index-position': `${counter}`,
                         },
                         listeners: [
                             {
@@ -413,29 +501,16 @@ const instantiateCarouselPlayersContainer = () => {
     ];
     renderElements(carouselPlayersContainer, mainContainer);
     carouselPlayersContainerElement = mainContainer.querySelector('#carousel-players-container');
-    carouselPlayersElement = mainContainer.querySelector('#carousel-players')
-}
-
-const moveCarousel = (direction) => {
-    carouselPlayerIndex = (carouselPlayerIndex + direction) == carouselPlayersElement.children.length? 0 : 
-                            (carouselPlayerIndex + direction) == -1 ? carouselPlayersElement.children.length - 1 : carouselPlayerIndex += direction;
-
-    if (carouselPlayerIndex == carouselPlayersElement.children.length - 1) {
-        carouselPlayersContainerElement.querySelector('.button-carousel-right').classList.add('hidden');
-    } else if (carouselPlayerIndex == 0) {
-        carouselPlayersContainerElement.querySelector('.button-carousel-left').classList.add('hidden');
-    } else {
-        carouselPlayersContainerElement.querySelector('.button-carousel-right').classList.remove('hidden');
-        carouselPlayersContainerElement.querySelector('.button-carousel-left').classList.remove('hidden');
-    }
+    carouselPlayersElement = mainContainer.querySelector('#carousel-players');
     
-    carouselPlayersElement.children[carouselPlayerIndex].scrollIntoView({
-        behavior: "smooth"
-    });
+    
 }
 
-const fetchSelectablePlayers = () => {
-    fetch("/playersTeamA.json")
+const fetchSelectablePlayers = (teamSelected) => {
+    console.log(teamSelected);
+    let url = teamSelected == 'A' ? "/playersTeamA.json" : "/playersTeamB.json"
+
+    fetch(url)
         .then((response) => response.json())
         .then((data) => {
             for(let player of data.players){
@@ -447,9 +522,10 @@ const fetchSelectablePlayers = () => {
                              draggable: true,
                              'data-role-player': player.role,
                              'data-selectable': true,
+                             'data-filter-counter': 0,
                              'data-index-player': player.id,
+                             'data-gender-player': player.gender,
                         },
-                        // observer: getObserver(),
                         listeners: [
                         {
                             event: 'dragstart',
@@ -500,7 +576,8 @@ const fetchSelectablePlayers = () => {
                 ]
                 renderElements(selectablePlayer, carouselPlayersElement);
             }
-            
+            setCarouselExtremaIndices(carouselPlayersElement.children.length - 1);
+
             instantiatePlayers();
         })
         .catch((error) => {
@@ -508,5 +585,11 @@ const fetchSelectablePlayers = () => {
         });
 };
 
+// window.addEventListener('beforeunload', reloadPage);
+
 initialize();
+
+
+
+
 

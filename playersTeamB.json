@@ -1,0 +1,123 @@
+{
+    "players":[
+        {
+            "id": 0,
+            "name": "aaa",
+            "role": "keeper",
+            "gender": "F",
+            "img": "PlayersAvatar/TeamB/avatar_1.png"
+        },
+        {
+            "id": 1,
+            "name": "bbb",
+            "role": "keeper",
+            "gender": "M",
+            "img": "PlayersAvatar/TeamB/avatar_2.png"
+        },
+        {
+            "id": 2,
+            "name": "ccc",
+            "role": "defender",
+            "gender": "M",
+            "img": "PlayersAvatar/TeamB/avatar_3.png"
+        },
+        {
+            "id": 3,
+            "name": "ddd",
+            "role": "defender",
+            "gender": "F",
+            "img": "PlayersAvatar/TeamB/avatar_4.png"
+        },
+        {
+            "id": 4,
+            "name": "eee",
+            "role": "defender",
+            "gender": "M",
+            "img": "PlayersAvatar/TeamB/avatar_5.png"
+        },
+        {
+            "id": 5,
+            "name": "fff",
+            "role": "defender",
+            "gender": "F",
+            "img": "PlayersAvatar/TeamB/avatar_6.png"
+        },
+        {
+            "id": 6,
+            "name": "ggg",
+            "role": "defender",
+            "gender": "F",
+            "img": "PlayersAvatar/TeamB/avatar_7.png"
+        },
+        {
+            "id": 7,
+            "name": "hhh",
+            "role": "mid",
+            "gender": "M",
+            "img": "PlayersAvatar/TeamB/avatar_5.png"
+        },
+        {
+            "id": 8,
+            "name": "iii",
+            "role": "mid",
+            "gender": "M",
+            "img": "PlayersAvatar/TeamB/avatar_3.png"
+        },
+        {
+            "id": 9,
+            "name": "lll",
+            "role": "mid",
+            "gender": "F",
+            "img": "PlayersAvatar/TeamB/avatar_4.png"
+        },
+        {
+            "id": 10,
+            "name": "mmm",
+            "role": "mid",
+            "gender": "M",
+            "img": "PlayersAvatar/TeamB/avatar_2.png"
+        },
+        {
+            "id": 11,
+            "name": "nnn",
+            "role": "mid",
+            "gender": "F",
+            "img": "PlayersAvatar/TeamB/avatar_1.png"
+        },
+        {
+            "id": 12,
+            "name": "ooo",
+            "role": "striker",
+            "gender": "M",
+            "img": "PlayersAvatar/TeamB/avatar_5.png"
+        },
+        {
+            "id": 13,
+            "name": "ppp",
+            "role": "striker",
+            "gender": "F",
+            "img": "PlayersAvatar/TeamB/avatar_7.png"
+        },
+        {
+            "id": 14,
+            "name": "qqq",
+            "role": "striker",
+            "gender": "M",
+            "img": "PlayersAvatar/TeamB/avatar_3.png"
+        },
+        {
+            "id": 15,
+            "name": "rrr",
+            "role": "striker",
+            "gender": "F",
+            "img": "PlayersAvatar/TeamB/avatar_1.png"
+        },
+        {
+            "id": 16,
+            "name": "sss",
+            "role": "striker",
+            "gender": "M",
+            "img": "PlayersAvatar/TeamB/avatar_2.png"
+        }
+    ]
+}
